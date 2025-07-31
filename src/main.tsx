@@ -6,12 +6,13 @@ import zhCN from 'antd/locale/zh_CN'
 import App from './App.tsx'
 import './index.css'
 
+
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ConfigProvider locale={zhCN}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ConfigProvider>
-  </StrictMode>,
+    <StrictMode>
+        <ConfigProvider locale={zhCN}>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </ConfigProvider>
+    </StrictMode>,
 )
