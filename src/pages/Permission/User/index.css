@@ -1,0 +1,15 @@
+.user-search-area {
+    margin-bottom: 16px;
+}
+
+.user-status-active {
+    color: #52c41a;
+}
+
+.user-status-inactive {
+    color: #ff4d4f;
+}
+
+.dashboard-stats {
+    margin-bottom: 24px;
+}

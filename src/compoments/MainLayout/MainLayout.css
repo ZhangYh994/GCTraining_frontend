@@ -1,0 +1,45 @@
+.app-layout {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    background: #f0f2f5;
+}
+
+.app-header {
+    width: 100%;
+    height: 64px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    position: fixed;
+    z-index: 1000;
+}
+
+.app-body {
+    display: flex;
+    margin-top: 64px;
+    height: calc(100vh - 64px);
+}
+
+.app-sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid #f0f0f0;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.app-content {
+    flex: 1;
+    background: #f0f2f5;
+    height: 100%;
+}
+
+.main-content {
+    margin: 24px;
+    padding: 24px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: calc(100% - 48px);
+}
