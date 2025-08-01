@@ -19,24 +19,3 @@ export interface UserSearchParams {
     pageSize: number;
 }
 
-export interface ApiResponse<T = any> {
-    success: boolean;
-    data: T;
-    message: string;
-    code: number;
-}
-
-export interface PagedResponse<T> {
-    list: T[];
-    total: number;
-    page: number;
-    pageSize: number;
-}
-
-export interface MenuItem {
-    key: string;
-    label: string;
-    icon?: React.ReactNode;
-    path?: string;
-    children?: MenuItem[];
-}

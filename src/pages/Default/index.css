@@ -1,0 +1,23 @@
+.default-index-root {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.default-index-card {
+    width: 620px;
+}
+
+.default-index-card:hover {
+    cursor: default;
+}
+
+.default-index-img {
+    margin: 10px;
+    display: block;
+    width: 273px;
+}
+
+.default-index-flex {
+    padding: 32px;
+}

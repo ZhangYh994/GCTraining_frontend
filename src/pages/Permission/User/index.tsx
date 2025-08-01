@@ -6,6 +6,7 @@ import type { TableProps } from 'antd';
 import type { User } from '../../../options/types';
 import { userService } from '../../../service/userService';
 import { DEPARTMENT_OPTIONS, USER_STATUS_OPTIONS } from '../../../options/routes';
+import './index.css';
 
 
 const UserManagement: React.FC = () => {
@@ -13,6 +14,14 @@ const UserManagement: React.FC = () => {
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
+    const [searchKeyword, setSearchKeyword] = useState('');
+    const [departmentFilter, setDepartmentFilter] = useState<string | undefined>(undefined);
+    const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const { Search } = Input;
+
 
 
     const columns: TableProps<User>['columns'] = [
@@ -91,7 +100,7 @@ const UserManagement: React.FC = () => {
             const userList = await userService.getUserList();
             setUsers(userList);
         } catch (error) {
-            message.error('获取用户列表失败');
+            messageApi.error('获取用户列表失败');
         }
     };
 
@@ -99,11 +108,11 @@ const UserManagement: React.FC = () => {
         try {
             await userService.deleteUser(id);
             console.log('删除成功1');
-            message.success('删除成功');
+            messageApi.success('删除成功');
             console.log('删除成功2');
             fetchUsers();
         } catch (error) {
-            message.error('删除失败');
+            messageApi.error('删除失败');
         }
     };
 
@@ -124,25 +133,29 @@ const UserManagement: React.FC = () => {
 
 
     const handleSubmit = async (values: any) => {
-        console.log('表单提交的数据:', values); // 添加这行查看提交的数据
-        console.log('是否为编辑模式:', !!editingUser); // 查看模式
+        console.log('表单提交的数据:', values);
+        console.log('是否为编辑模式:', !!editingUser);
         try {
             if (editingUser) {
                 await userService.updateUser(editingUser.id, values);
-                message.success('编辑成功');
+                messageApi.success('编辑成功');
             } else {
                 const submitData = {
                     ...values,
                     loginType: '正常登录'
                 };
                 await userService.createUser(submitData);
-                message.success('添加成功');
+                messageApi.success('添加成功');
             }
             setIsModalOpen(false);
             setEditingUser(null);
             fetchUsers();
         } catch (error) {
-            message.error('操作失败');
+            const errMsg =
+                (error as any)?.response?.data?.message ||
+                (error as any)?.message ||
+                '操作失败';
+            messageApi.error('操作失败：' + errMsg);
         }
     }
 
@@ -151,14 +164,63 @@ const UserManagement: React.FC = () => {
     }, []);
 
 
+    const getUserByFilters = () => {
+        return users.filter(user => {
+            const matchesKeyword = searchKeyword ? user.username.includes(searchKeyword) || user.nickname.includes(searchKeyword) : true;
+            const matchesDepartment = departmentFilter ? user.department === departmentFilter : true;
+            const matchesStatus = statusFilter ? user.status === statusFilter : true;
+            return matchesKeyword && matchesDepartment && matchesStatus;
+        });
+    };
 
     return (
-        <div style={{
-            height: '100%',
-            overflow: 'auto',  // 添加滚动
-            padding: '16px'    // 添加内边距
-        }}>
-            <Space style={{ marginBottom: 16 }}>
+
+        <div className='user-management-container'>
+
+            <div className="user-management-title">用户管理</div>
+
+            {contextHolder}
+            <Space wrap style={{ marginBottom: 16 }}>
+
+
+                {/* <Button type="primary" onClick={() => message.info('This is a normal message')}>
+                    Static Method
+                </Button>
+
+                {contextHolder}
+                <Button type="primary" onClick={() => messageApi.success('Hello, Ant Design!')}>
+                    Display normal message
+                </Button> */}
+
+                <Search
+                    placeholder="搜索用户名或昵称"
+                    allowClear
+                    style={{ width: 200 }}
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    onSearch={setSearchKeyword}
+                />
+
+
+
+                <Select
+                    placeholder="选择部门"
+                    allowClear
+                    style={{ width: 150 }}
+                    value={departmentFilter}
+                    onChange={setDepartmentFilter}
+                    options={DEPARTMENT_OPTIONS}
+                />
+
+                <Select
+                    placeholder="选择状态"
+                    allowClear
+                    style={{ width: 120 }}
+                    value={statusFilter}
+                    onChange={setStatusFilter}
+                    options={USER_STATUS_OPTIONS}
+                />
+
                 <Button
                     type="primary"
                     icon={<PlusOutlined />}
@@ -169,9 +231,10 @@ const UserManagement: React.FC = () => {
             </Space>
 
 
+            {contextHolder}
             <Table<User>
                 columns={columns}
-                dataSource={users}
+                dataSource={getUserByFilters()}
                 rowKey="id"
                 pagination={{
                     showSizeChanger: true,
